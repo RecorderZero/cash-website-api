@@ -1,7 +1,7 @@
-from .models import New, Classification, Project, ProjectClassification
+from .models import New, Classification, Project, ProjectClassification, Member, Position
 from rest_framework import permissions, viewsets
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -36,4 +36,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     queryset = Project.objects.all().order_by('id')
     serializer_class = ProjectSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class MemberViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows member to be viewed or edited.
+    """
+    queryset = Member.objects.all().order_by('id')
+    serializer_class = MemberSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+    
+class PositionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows position to be viewed or edited.
+    """
+    queryset = Position.objects.all().order_by('id')
+    serializer_class = PositionSerializer
     # permission_classes = [permissions.IsAuthenticated]

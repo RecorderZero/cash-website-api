@@ -27,6 +27,10 @@ router.register(r'new', views.NewViewSet)
 router.register(r'classification', views.ClassificationViewSet)
 router.register(r'projectclassification', views.ProjectClassificationViewSet)
 router.register(r'project', views.ProjectViewSet)
+router.register(r'member', views.MemberViewSet)
+router.register(r'position', views.PositionViewSet)
+
+
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

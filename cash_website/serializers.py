@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project
+from .models import New, Classification, ProjectClassification, Project, Member, Position
 
 class NewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,5 +22,18 @@ class ProjectClassificationSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
+        fields = '__all__'
+        read_only_field = ['id']
+        
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = '__all__'
+        read_only_field = ['id']
+        
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
         fields = '__all__'
         read_only_field = ['id']
