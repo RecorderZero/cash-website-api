@@ -1,7 +1,11 @@
-from .models import New, Classification, Project, ProjectClassification, Member, Position
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+
+from .models import New, Classification, Project, ProjectClassification, Member, Position, Snippet
 from rest_framework import permissions, viewsets
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer, SnippetSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -53,3 +57,21 @@ class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all().order_by('id')
     serializer_class = PositionSerializer
     # permission_classes = [permissions.IsAuthenticated]
+    
+@csrf_exempt
+def snippet_list(request):
+    """
+    List all code snippets, or create a new snippet.
+    """
+    if request.method == 'GET':
+        snippets = Snippet.objects.all()
+        serializer = SnippetSerializer(snippets, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = SnippetSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
