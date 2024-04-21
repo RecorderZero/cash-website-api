@@ -17,18 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
 
 from cash_website import views
 
-router = routers.DefaultRouter()
 # router.register(r'users', views.UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
+
+router = routers.DefaultRouter()
 router.register(r'new', views.NewViewSet)
 router.register(r'classification', views.ClassificationViewSet)
 router.register(r'projectclassification', views.ProjectClassificationViewSet)
 router.register(r'project', views.ProjectViewSet)
 router.register(r'member', views.MemberViewSet)
 router.register(r'position', views.PositionViewSet)
+router.register(r'test', views.TestViewSet)
+router.register(r'newimage', views.NewImageViewSet)
 
 
 
@@ -36,6 +41,7 @@ router.register(r'position', views.PositionViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('', include('cash_website.urls')),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,19 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Member, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
+from .models import New, Classification, ProjectClassification, Project, Member, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, Test, NewImage
+from django.contrib.auth.models import User
+
+class NewImageSerializer(serializers.ModelSerializer):
+    
+    # related_new = serializers.PrimaryKeyRelatedField(postid)
+
+    class Meta:
+        model = NewImage
+        fields = '__all__'
+
+class TestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = '__all__'
 
 class NewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,7 +55,16 @@ class PositionSerializer(serializers.ModelSerializer):
 class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippet
-        fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
+        fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner']
+        owner = serializers.ReadOnlyField(source='owner.username')
+
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'snippets']
+
 # class SnippetSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
 #     title = serializers.CharField(required=False, allow_blank=True, max_length=100)
