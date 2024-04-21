@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Member, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, Test, NewImage
+from .models import New, Classification, ProjectClassification, Project, Member, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, Test, NewImage, ProjectImage, CarouselImage
 from django.contrib.auth.models import User
 
 class NewImageSerializer(serializers.ModelSerializer):
@@ -8,6 +8,22 @@ class NewImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NewImage
+        fields = '__all__'
+
+class ProjectImageSerializer(serializers.ModelSerializer):
+    
+    # related_new = serializers.PrimaryKeyRelatedField(postid)
+
+    class Meta:
+        model = ProjectImage
+        fields = '__all__'
+
+class CarouselImageSerializer(serializers.ModelSerializer):
+    
+    # related_new = serializers.PrimaryKeyRelatedField(postid)
+
+    class Meta:
+        model = CarouselImage
         fields = '__all__'
 
 class TestSerializer(serializers.ModelSerializer):

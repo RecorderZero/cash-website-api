@@ -65,8 +65,21 @@ class Project(models.Model):
     
 class NewImage(models.Model):
     image = models.ImageField(upload_to='news')
-    # related_new = models.ForeignKey(New, related_name='images', on_delete=models.CASCADE)
+    related_new = models.ForeignKey(New, related_name='images', on_delete=models.CASCADE, null=True)
 
+    # def __str__(self):
+    #     return self.image
+
+class ProjectImage(models.Model):
+    image = models.ImageField(upload_to='projects')
+    related_project = models.ForeignKey(Project, related_name='images', on_delete=models.CASCADE, null=True)
+
+    # def __str__(self):
+    #     return self.image
+
+class CarouselImage(models.Model):
+    image = models.ImageField(upload_to='carousels')
+    
     # def __str__(self):
     #     return self.image
 

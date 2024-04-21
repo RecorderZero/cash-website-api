@@ -2,17 +2,18 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from django.shortcuts import get_object_or_404
 
-from .models import New, Classification, Project, ProjectClassification, Member, Position, Snippet, Test, NewImage
+from .models import New, Classification, Project, ProjectClassification, Member, Position, Snippet, Test, NewImage, ProjectImage, CarouselImage
 from rest_framework import permissions, viewsets, status
 
-from .form import UploadForm
-
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer, SnippetSerializer, TestSerializer, NewImageSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer, SnippetSerializer, TestSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
 # from django.shortcuts import render
 
 # Create your views here.
 # 權限尚須調整 post,patch等需要權限
+
+TRANSLATE_ADDR = 'http://127.0.0.1:8000'
 
 class NewImageViewSet(viewsets.ModelViewSet):
     queryset = NewImage.objects.all()
@@ -30,13 +31,34 @@ class NewImageViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.save(post=post.id) 需要自動儲存newid
 
-# def upload(request):
-#     if request.FILES:
-#         form = UploadForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
+class ProjectImageViewSet(viewsets.ModelViewSet):
+    queryset = ProjectImage.objects.all()
+    serializer_class = ProjectImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-#     return JsonResponse({'success': True})
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            for file in request.FILES.getlist('image'):
+                serializer.save(image=file)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+class CarouselImageViewSet(viewsets.ModelViewSet):
+    queryset = CarouselImage.objects.all()
+    serializer_class = CarouselImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            for file in request.FILES.getlist('image'):
+                serializer.save(image=file)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
 
 class TestViewSet(viewsets.ModelViewSet):
     queryset = Test.objects.all()
@@ -50,6 +72,23 @@ class NewViewSet(viewsets.ModelViewSet):
     serializer_class = NewSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
+def get_new_with_images(request, new_id):
+    new_instance = get_object_or_404(New, pk=new_id)
+    new_images = new_instance.images.all()
+    image_urls = []
+    # 將相關的NewImage數據轉換為JSON格式
+    for new_image in new_images:
+        image_url = TRANSLATE_ADDR + new_image.image.url
+        image_urls.append(image_url)
+        # image_urls = [new_image.image.url for new_image in new_images]
+
+    # 返回包含New和相關NewImage的JSON響應
+    return JsonResponse({
+        'title': new_instance.title,
+        'content': new_instance.content,
+        'image_urls': image_urls
+    })
+
 class ClassificationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows classification to be viewed or edited.
