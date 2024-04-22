@@ -79,6 +79,7 @@ class ProjectImage(models.Model):
 
 class CarouselImage(models.Model):
     image = models.ImageField(upload_to='carousels')
+    displayornot = models.BooleanField(default=True)
     
     # def __str__(self):
     #     return self.image
