@@ -28,7 +28,7 @@ class Member(models.Model):
         return self.name
     
 class Classification(models.Model):
-    chinese_text = models.CharField(max_length=15)
+    chinese_text = models.CharField(max_length=15, unique=True)
     english_text = models.CharField(max_length=30, unique=True)
     
     def __str__(self):
@@ -37,15 +37,21 @@ class Classification(models.Model):
 class New(models.Model):
     title = models.CharField(max_length=30)
     content = models.TextField(blank=True, null=True)
-    imageUrl = models.JSONField("imageUrl", default=dict, blank=True, null=True)
-    classification = models.ForeignKey(Classification, to_field="english_text", on_delete=models.CASCADE)
+    imageUrl = models.CharField(max_length=100, blank=True, null=True)
+    classification = models.ForeignKey(Classification, to_field="chinese_text", on_delete=models.CASCADE)
     date = models.DateField()
     
     def __str__(self):
         return self.title
+
+    def delete(self, *args, **kwargs):
+        # 刪除相關聯的 NewImage 實例以及其檔案
+        for new_image in self.images.all():
+            new_image.delete()
+        super().delete(*args, **kwargs)
     
 class ProjectClassification(models.Model):
-    chinese_text = models.CharField(max_length=15)
+    chinese_text = models.CharField(max_length=15, unique=True)
     english_text = models.CharField(max_length=30, unique=True)
     
     def __str__(self):
@@ -57,7 +63,7 @@ class Project(models.Model):
     imageUrl = models.JSONField("imageUrl", default=dict, blank=True, null=True)
     member = models.ManyToManyField(Member)
     location = models.TextField(max_length=30, null=True)
-    classification = models.ForeignKey(ProjectClassification, to_field="english_text", on_delete=models.CASCADE)
+    classification = models.ForeignKey(ProjectClassification, to_field="chinese_text", on_delete=models.CASCADE)
     date = models.DateField()
     
     def __str__(self):
@@ -69,6 +75,11 @@ class NewImage(models.Model):
 
     # def __str__(self):
     #     return self.image
+
+    def delete(self, *args, **kwargs):
+        # 刪除檔案
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
 class ProjectImage(models.Model):
     image = models.ImageField(upload_to='projects')

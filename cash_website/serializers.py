@@ -32,6 +32,8 @@ class TestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NewSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%Y-%m-%d")
+
     class Meta:
         model = New
         fields = '__all__'
