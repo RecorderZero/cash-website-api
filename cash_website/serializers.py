@@ -19,9 +19,6 @@ class ProjectImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CarouselImageSerializer(serializers.ModelSerializer):
-    
-    # related_new = serializers.PrimaryKeyRelatedField(postid)
-
     class Meta:
         model = CarouselImage
         fields = '__all__'

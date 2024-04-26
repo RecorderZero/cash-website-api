@@ -68,6 +68,7 @@ class CarouselImageViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
+        request.data['displayornot'] = True
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             for file in request.FILES.getlist('image'):
@@ -98,7 +99,7 @@ class NewViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows new to be viewed or edited.
     """
-    queryset = New.objects.all().order_by('id')
+    queryset = New.objects.all().order_by('-date')
     serializer_class = NewSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
@@ -123,7 +124,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows project to be viewed or edited.
     """
-    queryset = Project.objects.all().order_by('id')
+    queryset = Project.objects.all().order_by('-date')
     serializer_class = ProjectSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
