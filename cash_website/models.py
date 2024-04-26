@@ -10,13 +10,12 @@ STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 # Create your models here.
 class Position(models.Model):
-    chinese_text = models.CharField(max_length=15)
-    english_text = models.CharField(max_length=30)
+    chinese_text = models.CharField(max_length=15, unique=True)
     
     def __str__(self):
         return self.chinese_text
 
-class Member(models.Model):
+class Employee(models.Model):
     name = models.CharField(max_length=10)
     position = models.ManyToManyField(Position)
     education = models.TextField(null=True)
@@ -29,7 +28,6 @@ class Member(models.Model):
     
 class Classification(models.Model):
     chinese_text = models.CharField(max_length=15, unique=True)
-    english_text = models.CharField(max_length=30, unique=True)
     
     def __str__(self):
         return self.chinese_text
@@ -52,7 +50,6 @@ class New(models.Model):
     
 class ProjectClassification(models.Model):
     chinese_text = models.CharField(max_length=15, unique=True)
-    english_text = models.CharField(max_length=30, unique=True)
     
     def __str__(self):
         return self.chinese_text
@@ -60,14 +57,20 @@ class ProjectClassification(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=30)
     content = models.TextField(blank=True, null=True)
-    imageUrl = models.JSONField("imageUrl", default=dict, blank=True, null=True)
-    member = models.ManyToManyField(Member)
+    imageUrl = models.CharField(max_length=100, blank=True, null=True)
+    employee = models.ManyToManyField(Employee)
     location = models.TextField(max_length=30, null=True)
     classification = models.ForeignKey(ProjectClassification, to_field="chinese_text", on_delete=models.CASCADE)
     date = models.DateField()
     
     def __str__(self):
         return self.title
+    
+    def delete(self, *args, **kwargs):
+        # 刪除相關聯的 ProjectImage 實例以及其檔案
+        for project_image in self.images.all():
+            project_image.delete()
+        super().delete(*args, **kwargs)
     
 class NewImage(models.Model):
     image = models.ImageField(upload_to='news')
@@ -88,10 +91,15 @@ class ProjectImage(models.Model):
     # def __str__(self):
     #     return self.image
 
+    def delete(self, *args, **kwargs):
+        # 刪除檔案
+        self.image.delete()
+        super().delete(*args, **kwargs)
+
 class CarouselImage(models.Model):
     image = models.ImageField(upload_to='carousels')
     displayornot = models.BooleanField(default=True)
-    
+    order = models.IntegerField(default=999)
     # def __str__(self):
     #     return self.image
 

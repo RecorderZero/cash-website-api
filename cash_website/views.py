@@ -3,11 +3,12 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.core import serializers
 
-from .models import New, Classification, Project, ProjectClassification, Member, Position, Snippet, Test, NewImage, ProjectImage, CarouselImage
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, Snippet, Test, NewImage, ProjectImage, CarouselImage
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, MemberSerializer, PositionSerializer, SnippetSerializer, TestSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, SnippetSerializer, TestSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -48,6 +49,31 @@ def get_new_with_images(request, new_id):
         'image_urls': image_urls
     })
 
+def get_project_with_images(request, project_id):
+    project_instance = get_object_or_404(Project, pk=project_id)
+    project_images = project_instance.images.all()
+    image_urls = []
+    # 將相關的projectImage數據轉換為JSON格式
+    for project_image in project_images:
+        image_url = TRANSLATE_ADDR + project_image.image.url
+        image_urls.append(image_url)
+        # image_urls = [new_image.image.url for new_image in new_images]
+   
+    # 使用 serializers 序列化 ManyToManyField
+    employees_data = serializers.serialize('json', project_instance.employee.all())
+
+    # 返回包含New和相關NewImage的JSON響應
+    return JsonResponse({
+        'title': project_instance.title,
+        'content': project_instance.content,
+        'image_urls': image_urls,
+        'employee': employees_data,
+        'location': project_instance.location,
+        'date': project_instance.date
+
+
+    })
+
 class ProjectImageViewSet(viewsets.ModelViewSet):
     queryset = ProjectImage.objects.all()
     serializer_class = ProjectImageSerializer
@@ -63,7 +89,7 @@ class ProjectImageViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class CarouselImageViewSet(viewsets.ModelViewSet):
-    queryset = CarouselImage.objects.all()
+    queryset = CarouselImage.objects.all().order_by('-displayornot')
     serializer_class = CarouselImageSerializer
     parser_classes = (MultiPartParser, FormParser)
 
@@ -128,12 +154,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
-class MemberViewSet(viewsets.ModelViewSet):
+class EmployeeViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows member to be viewed or edited.
+    API endpoint that allows Employee to be viewed or edited.
     """
-    queryset = Member.objects.all().order_by('id')
-    serializer_class = MemberSerializer
+    queryset = Employee.objects.all().order_by('id')
+    serializer_class = EmployeeSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
 class PositionViewSet(viewsets.ModelViewSet):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Member, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, Test, NewImage, ProjectImage, CarouselImage
+from .models import New, Classification, ProjectClassification, Project, Employee, Position, Snippet, LANGUAGE_CHOICES, STYLE_CHOICES, Test, NewImage, ProjectImage, CarouselImage
 from django.contrib.auth.models import User
 
 class NewImageSerializer(serializers.ModelSerializer):
@@ -49,14 +49,16 @@ class ProjectClassificationSerializer(serializers.ModelSerializer):
         read_only_field = ['id']
         
 class ProjectSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%Y-%m-%d")
+
     class Meta:
         model = Project
         fields = '__all__'
         read_only_field = ['id']
         
-class MemberSerializer(serializers.ModelSerializer):
+class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Member
+        model = Employee
         fields = '__all__'
         read_only_field = ['id']
         

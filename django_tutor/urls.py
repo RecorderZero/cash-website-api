@@ -30,7 +30,7 @@ router.register(r'new', views.NewViewSet)
 router.register(r'classification', views.ClassificationViewSet)
 router.register(r'projectclassification', views.ProjectClassificationViewSet)
 router.register(r'project', views.ProjectViewSet)
-router.register(r'member', views.MemberViewSet)
+router.register(r'employee', views.EmployeeViewSet)
 router.register(r'position', views.PositionViewSet)
 router.register(r'test', views.TestViewSet)
 router.register(r'newimage', views.NewImageViewSet)
@@ -47,6 +47,7 @@ urlpatterns = [
     # path('', include('cash_website.urls')),
     path('get_new_with_images/<int:new_id>/', views.get_new_with_images),
     path('get_valid_carousel/', views.get_valid_carousel),
+    path('get_project_with_images/<int:project_id>/', views.get_project_with_images),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
