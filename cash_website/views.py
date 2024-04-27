@@ -32,6 +32,17 @@ class NewImageViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.save(post=post.id) 需要自動儲存newid
 
+def get_new_images_detail(request, new_id):
+    new_instance = get_object_or_404(New, pk=new_id)
+    new_images = new_instance.images.all()
+
+    # 使用 NewImageSerializer 序列化 new_images
+    serializer = NewImageSerializer(new_images, many=True)
+    serialized_data = serializer.data
+    
+    # 返回序列化后的数据给前端
+    return JsonResponse(serialized_data, safe=False)    
+
 def get_new_with_images(request, new_id):
     new_instance = get_object_or_404(New, pk=new_id)
     new_images = new_instance.images.all()
