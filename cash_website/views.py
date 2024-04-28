@@ -32,6 +32,21 @@ class NewImageViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.save(post=post.id) 需要自動儲存newid
 
+def get_project_images_detail(request, project_id):
+    project_instance = get_object_or_404(Project, pk=project_id)
+    project_images = project_instance.images.all()
+
+    # 使用 projectImageSerializer 序列化 project_images
+    serializer = ProjectImageSerializer(project_images, many=True)
+    serialized_data = serializer.data
+    
+    # 遍历每个图像对象，修改其中的 URL 字段
+    for image_data in serialized_data:
+        image_data['image'] = TRANSLATE_ADDR + image_data['image']
+
+    # 返回序列化后的数据给前端
+    return JsonResponse(serialized_data, safe=False) 
+
 def get_new_images_detail(request, new_id):
     new_instance = get_object_or_404(New, pk=new_id)
     new_images = new_instance.images.all()
@@ -40,6 +55,10 @@ def get_new_images_detail(request, new_id):
     serializer = NewImageSerializer(new_images, many=True)
     serialized_data = serializer.data
     
+    # 遍历每个图像对象，修改其中的 URL 字段
+    for image_data in serialized_data:
+        image_data['image'] = TRANSLATE_ADDR + image_data['image']
+
     # 返回序列化后的数据给前端
     return JsonResponse(serialized_data, safe=False)    
 
@@ -136,7 +155,7 @@ class NewViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows new to be viewed or edited.
     """
-    queryset = New.objects.all().order_by('-date')
+    queryset = New.objects.all().order_by('-date', '-id')
     serializer_class = NewSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
@@ -161,7 +180,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows project to be viewed or edited.
     """
-    queryset = Project.objects.all().order_by('-date')
+    queryset = Project.objects.all().order_by('-date', '-id')
     serializer_class = ProjectSerializer
     # permission_classes = [permissions.IsAuthenticated]
     

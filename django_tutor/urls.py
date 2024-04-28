@@ -49,6 +49,7 @@ urlpatterns = [
     path('get_valid_carousel/', views.get_valid_carousel),
     path('get_project_with_images/<int:project_id>/', views.get_project_with_images),
     path('get_new_images_detail/<int:new_id>/', views.get_new_images_detail),
+    path('get_project_images_detail/<int:project_id>/', views.get_project_images_detail),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
