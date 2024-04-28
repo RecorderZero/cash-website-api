@@ -158,6 +158,22 @@ class NewViewSet(viewsets.ModelViewSet):
     queryset = New.objects.all().order_by('-date', '-id')
     serializer_class = NewSerializer
     # permission_classes = [permissions.IsAuthenticated]
+
+    # 添加 basename 参数
+    basename = 'new'
+
+    def list(self, request, *args, **kwargs):
+        # 从 URL 查询参数中获取要返回的 New 对象数量
+        num_of_news = int(request.query_params.get('num', 0))
+
+        # 如果返回全部，则直接使用父类的 list 方法处理查询结果
+        if num_of_news == 0:
+            return super().list(request, *args, **kwargs)
+
+        # 否则根据日期和 ID 递减的顺序获取新闻，并根据 num_of_news 进行切片
+        queryset = self.filter_queryset(self.get_queryset())[:num_of_news]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     
 
 class ClassificationViewSet(viewsets.ModelViewSet):
