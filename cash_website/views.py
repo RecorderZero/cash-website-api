@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.core import serializers
+import json
 
 from .models import New, Classification, Project, ProjectClassification, Employee, Position, Snippet, Test, NewImage, ProjectImage, CarouselImage
 from rest_framework import permissions, viewsets, status
@@ -119,33 +120,58 @@ class ProjectImageViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class CarouselImageViewSet(viewsets.ModelViewSet):
-    queryset = CarouselImage.objects.all().order_by('-displayornot')
+    queryset = CarouselImage.objects.all().order_by('order')
     serializer_class = CarouselImageSerializer
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
-        request.data['displayornot'] = True
-        serializer = self.get_serializer(data=request.data)
+       # 從 request.data 中獲取圖片和 order
+        image = request.FILES.get('image')
+        order = request.data.get('order')
+
+        # 創建包含圖片和 order 的字典
+        carousel_dict = {'image': image, 'order': order, 'displayornot': True}
+
+        # 創建序列化器並嘗試保存資料
+        serializer = self.get_serializer(data=carousel_dict)
         if serializer.is_valid():
-            for file in request.FILES.getlist('image'):
-                serializer.save(image=file)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def get_valid_carousel(request):
-    valid_carousel = get_list_or_404(CarouselImage, displayornot=True)
-    image_urls = []
-    # 將有效的carousel數據轉換為JSON格式
-    for carousel in valid_carousel:
-        image_url = TRANSLATE_ADDR + carousel.image.url
-        image_urls.append(image_url)
-        # image_urls = [new_image.image.url for new_image in new_images]
+    # 獲取有效的carousel數據，按照order由小到大排序
+    valid_carousel = CarouselImage.objects.filter(displayornot=True).order_by('order')
 
-    # 返回carousel的JSON響應
-    return JsonResponse({
-        'image_urls': image_urls
-    }) 
+    # 根據?source參數返回不同的結果
+    source = request.GET.get('source')
+
+    if source == 'back':
+        # 如果'?source=back'，回傳{'id': id, 'order': order}的物件陣列
+        carousel_data = [{'id': carousel.id, 'order': carousel.order} for carousel in valid_carousel]
+        return JsonResponse(carousel_data, safe=False)
+    elif source == 'front':
+        # 如果'?source=front'，回傳{'image_urls': image_urls}陣列
+        image_urls = [TRANSLATE_ADDR + carousel.image.url for carousel in valid_carousel]
+        return JsonResponse({'image_urls': image_urls})
+    else:
+        # 如果source參數不是'back'或'front'，返回錯誤響應
+        return JsonResponse({'error': 'Invalid source parameter'})
+
+# def get_valid_carousel(request):
+#     valid_carousel = get_list_or_404(CarouselImage, displayornot=True)
+#     image_urls = []
+#     # 將有效的carousel數據轉換為JSON格式
+#     for carousel in valid_carousel:
+#         image_url = TRANSLATE_ADDR + carousel.image.url
+#         image_urls.append(image_url)
+#         # image_urls = [new_image.image.url for new_image in new_images]
+
+#     # 返回carousel的JSON響應
+#     return JsonResponse({
+#         'image_urls': image_urls
+#     }) 
 
 class TestViewSet(viewsets.ModelViewSet):
     queryset = Test.objects.all()

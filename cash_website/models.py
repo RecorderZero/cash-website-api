@@ -99,7 +99,7 @@ class ProjectImage(models.Model):
 class CarouselImage(models.Model):
     image = models.ImageField(upload_to='carousels')
     displayornot = models.BooleanField(default=True)
-    order = models.IntegerField(default=999)
+    order = models.IntegerField(null=True)
     # def __str__(self):
     #     return self.image
 
