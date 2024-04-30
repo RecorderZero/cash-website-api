@@ -6,10 +6,10 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.core import serializers
 import json
 
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, Snippet, Test, NewImage, ProjectImage, CarouselImage
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, SnippetSerializer, TestSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -35,7 +35,7 @@ class NewImageViewSet(viewsets.ModelViewSet):
 
 def get_project_images_detail(request, project_id):
     project_instance = get_object_or_404(Project, pk=project_id)
-    project_images = project_instance.images.all()
+    project_images = project_instance.images.all().order_by('id')
 
     # 使用 projectImageSerializer 序列化 project_images
     serializer = ProjectImageSerializer(project_images, many=True)
@@ -50,7 +50,7 @@ def get_project_images_detail(request, project_id):
 
 def get_new_images_detail(request, new_id):
     new_instance = get_object_or_404(New, pk=new_id)
-    new_images = new_instance.images.all()
+    new_images = new_instance.images.all().order_by('id')
 
     # 使用 NewImageSerializer 序列化 new_images
     serializer = NewImageSerializer(new_images, many=True)
@@ -65,7 +65,7 @@ def get_new_images_detail(request, new_id):
 
 def get_new_with_images(request, new_id):
     new_instance = get_object_or_404(New, pk=new_id)
-    new_images = new_instance.images.all()
+    new_images = new_instance.images.all().order_by('id')
     image_urls = []
     # 將相關的NewImage數據轉換為JSON格式
     for new_image in new_images:
@@ -82,7 +82,7 @@ def get_new_with_images(request, new_id):
 
 def get_project_with_images(request, project_id):
     project_instance = get_object_or_404(Project, pk=project_id)
-    project_images = project_instance.images.all()
+    project_images = project_instance.images.all().order_by('id')
     image_urls = []
     # 將相關的projectImage數據轉換為JSON格式
     for project_image in project_images:
@@ -100,7 +100,8 @@ def get_project_with_images(request, project_id):
         'image_urls': image_urls,
         'employee': employees_data,
         'location': project_instance.location,
-        'date': project_instance.date
+        'startDate': project_instance.startDate,
+        'endDate': project_instance.endDate
 
 
     })
@@ -173,10 +174,6 @@ def get_valid_carousel(request):
 #         'image_urls': image_urls
 #     }) 
 
-class TestViewSet(viewsets.ModelViewSet):
-    queryset = Test.objects.all()
-    serializer_class = TestSerializer
-
 class NewViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows new to be viewed or edited.
@@ -222,7 +219,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows project to be viewed or edited.
     """
-    queryset = Project.objects.all().order_by('-date', '-id')
+    queryset = Project.objects.all().order_by('-endDate', '-id')
     serializer_class = ProjectSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
@@ -242,46 +239,3 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
-@csrf_exempt
-def snippet_list(request):
-    """
-    List all code snippets, or create a new snippet.
-    """
-    if request.method == 'GET':
-        snippets = Snippet.objects.all()
-        serializer = SnippetSerializer(snippets, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = SnippetSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-    
-@csrf_exempt
-def snippet_detail(request, pk):
-    """
-    Retrieve, update or delete a code snippet.
-    """
-    try:
-        snippet = Snippet.objects.get(pk=pk)
-    except Snippet.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = SnippetSerializer(snippet)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = SnippetSerializer(snippet, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        snippet.delete()
-        return HttpResponse(status=204)
