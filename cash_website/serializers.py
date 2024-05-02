@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage
+from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage, User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 class NewImageSerializer(serializers.ModelSerializer):
     

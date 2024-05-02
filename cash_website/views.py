@@ -5,17 +5,50 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.core import serializers
 import json
+# from django.contrib.auth.hashers import check_password
 
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer
 # from django.shortcuts import render
 
 # Create your views here.
 # 權限尚須調整 post,patch等需要權限
 
 TRANSLATE_ADDR = 'http://127.0.0.1:8000'
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows user to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UserSerializer
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        # 獲取用戶輸入的員工姓名
+        employee_name = request.data.get('name')
+        
+        # 查找該員工是否已有帳號
+        existing_user = User.objects.filter(name=employee_name).first()
+        if existing_user:
+            # 如果已經存在，返回錯誤訊息
+            return Response({'error': '已經存在帳號'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 查找是否存在對應的員工
+        employee = Employee.objects.filter(name=employee_name).first()
+        
+        if not employee:
+            # 如果不存在，返回錯誤訊息
+            return Response({'error': '資料尚未登錄'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 如果存在，則創建新的用戶
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class NewImageViewSet(viewsets.ModelViewSet):
     queryset = NewImage.objects.all()
@@ -102,9 +135,20 @@ def get_project_with_images(request, project_id):
         'location': project_instance.location,
         'startDate': project_instance.startDate,
         'endDate': project_instance.endDate
-
-
     })
+
+def verify_user(request):
+    user_account = request.GET.get('account')
+    user = User.objects.filter(account=user_account).first()
+
+    if not user:
+        return JsonResponse({'error': '帳號不存在'}, status=400)
+    
+    user_password = request.GET.get('password')
+    if user.password != user_password:
+        return JsonResponse({'error': '密碼錯誤'}, status=400)
+
+    return JsonResponse({'name': user.name.name, 'role': user.role}, status=200)
 
 class ProjectImageViewSet(viewsets.ModelViewSet):
     queryset = ProjectImage.objects.all()

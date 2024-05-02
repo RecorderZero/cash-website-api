@@ -35,7 +35,7 @@ router.register(r'position', views.PositionViewSet)
 router.register(r'newimage', views.NewImageViewSet)
 router.register(r'projectimage', views.ProjectImageViewSet)
 router.register(r'carouselimage', views.CarouselImageViewSet)
-
+router.register(r'user', views.UserViewSet)
 
 
 
@@ -44,6 +44,7 @@ router.register(r'carouselimage', views.CarouselImageViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('', include('cash_website.urls')),
+    path('verify/', views.verify_user),
     path('get_new_with_images/<int:new_id>/', views.get_new_with_images),
     path('get_valid_carousel/', views.get_valid_carousel),
     path('get_project_with_images/<int:project_id>/', views.get_project_with_images),

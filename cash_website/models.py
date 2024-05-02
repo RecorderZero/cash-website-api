@@ -9,7 +9,7 @@ class Position(models.Model):
         return self.chinese_text
 
 class Employee(models.Model):
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, unique=True)
     position = models.ManyToManyField(Position, blank=True)
     education = models.TextField(null=True, blank=True)
     experience = models.TextField(null=True, blank=True)
@@ -19,6 +19,16 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
     
+class User(models.Model):
+    account = models.CharField(max_length=20)
+    password = models.CharField(max_length=20)
+    email = models.CharField(max_length=40, unique=True)
+    role = models.CharField(max_length=15, default='可讀')
+    name = models.ForeignKey(Employee, to_field='name', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.employeeId
+
 class Classification(models.Model):
     chinese_text = models.CharField(max_length=15, unique=True)
     
@@ -96,5 +106,3 @@ class CarouselImage(models.Model):
     order = models.IntegerField(null=True)
     # def __str__(self):
     #     return self.image
-
-    
