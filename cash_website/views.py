@@ -197,8 +197,8 @@ def get_valid_carousel(request):
         return JsonResponse(carousel_data, safe=False)
     elif source == 'front':
         # 如果'?source=front'，回傳{'image_urls': image_urls}陣列
-        image_urls = [TRANSLATE_ADDR + carousel.image.url for carousel in valid_carousel]
-        return JsonResponse({'image_urls': image_urls})
+        carousel = [{'imageUrl': TRANSLATE_ADDR + carousel.image.url, 'location': carousel.location, 'date': carousel.date} for carousel in valid_carousel]
+        return JsonResponse(carousel, safe=False)
     else:
         # 如果source參數不是'back'或'front'，返回錯誤響應
         return JsonResponse({'error': 'Invalid source parameter'})
