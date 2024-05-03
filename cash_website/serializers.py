@@ -23,6 +23,8 @@ class ProjectImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CarouselImageSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%Y-%m-%d")
+    
     class Meta:
         model = CarouselImage
         fields = '__all__'

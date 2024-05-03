@@ -170,17 +170,16 @@ class CarouselImageViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
-       # 從 request.data 中獲取圖片和 order
-        image = request.FILES.get('image')
-        order = request.data.get('order')
-
-        # 創建包含圖片和 order 的字典
-        carousel_dict = {'image': image, 'order': order, 'displayornot': True}
-
-        # 創建序列化器並嘗試保存資料
-        serializer = self.get_serializer(data=carousel_dict)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            carouselOrder = request.data.get('order')
+            carouselLocation = request.data.get('location')
+            carouselDate = request.data.get('date')
+            file = request.FILES.get('image')
+            serializer.save(image=file, order=carouselOrder,
+                            location=carouselLocation,
+                            date=carouselDate,
+                            displayornot=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

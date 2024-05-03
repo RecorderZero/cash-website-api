@@ -73,7 +73,7 @@ class Project(models.Model):
     title = models.CharField(max_length=30)
     content = models.TextField(blank=True, null=True)
     imageUrl = models.CharField(max_length=100, blank=True, null=True)
-    employee = models.ManyToManyField(Employee)
+    employee = models.ManyToManyField(Employee, blank=True)
     location = models.TextField(max_length=30, null=True)
     classification = models.ForeignKey(ProjectClassification, to_field="chinese_text", on_delete=models.CASCADE)
     startDate = models.DateField(null=True)
@@ -104,5 +104,7 @@ class CarouselImage(models.Model):
     image = models.ImageField(upload_to='carousels')
     displayornot = models.BooleanField(default=True)
     order = models.IntegerField(null=True)
+    location = models.CharField(max_length=30, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     # def __str__(self):
     #     return self.image
