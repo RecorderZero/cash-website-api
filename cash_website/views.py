@@ -5,6 +5,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.core import serializers
 import json
+from urllib.parse import unquote
 # from django.contrib.auth.hashers import check_password
 
 from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User
@@ -221,12 +222,23 @@ class NewViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows new to be viewed or edited.
     """
-    queryset = New.objects.all().order_by('-date', '-id')
+    # queryset = New.objects.all().order_by('-date', '-id')
     serializer_class = NewSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
     # 添加 basename 参数
     basename = 'new'
+
+    def get_queryset(self):
+        category = self.request.query_params.get('category', None)
+        if category is None:
+            queryset = New.objects.all().order_by('-date', '-id')
+
+        else:
+            category = unquote(category)
+            queryset = New.objects.all().order_by('-date', '-id').filter(classification=category)
+        
+        return queryset
 
     def list(self, request, *args, **kwargs):
         # 从 URL 查询参数中获取要返回的 New 对象数量
@@ -262,9 +274,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows project to be viewed or edited.
     """
-    queryset = Project.objects.all().order_by('-endDate', '-id')
+    # queryset = Project.objects.all().order_by('-endDate', '-id')
     serializer_class = ProjectSerializer
     # permission_classes = [permissions.IsAuthenticated]
+    basename = 'project'
+    
+    def get_queryset(self):
+        category = self.request.query_params.get('category', None)
+        if category is None:
+            queryset = Project.objects.all().order_by('-endDate', '-id')
+
+        else:
+            category = unquote(category)
+            print(category)
+            queryset = Project.objects.all().order_by('-endDate', '-id').filter(classification=category)
+        
+        return queryset
     
 class EmployeeViewSet(viewsets.ModelViewSet):
     """

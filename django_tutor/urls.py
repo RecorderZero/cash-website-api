@@ -26,10 +26,10 @@ from cash_website import views
 # router.register(r'groups', views.GroupViewSet)
 
 router = routers.DefaultRouter()
-router.register(r'new', views.NewViewSet)
+router.register(r'new', views.NewViewSet, basename = 'new')
 router.register(r'classification', views.ClassificationViewSet)
 router.register(r'projectclassification', views.ProjectClassificationViewSet)
-router.register(r'project', views.ProjectViewSet)
+router.register(r'project', views.ProjectViewSet, basename = 'project')
 router.register(r'employee', views.EmployeeViewSet)
 router.register(r'position', views.PositionViewSet)
 router.register(r'newimage', views.NewImageViewSet)
