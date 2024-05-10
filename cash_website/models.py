@@ -27,7 +27,7 @@ class User(models.Model):
     name = models.ForeignKey(Employee, to_field='name', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.employeeId
+        return self.name.name
 
 class Classification(models.Model):
     chinese_text = models.CharField(max_length=15, unique=True)
@@ -37,6 +37,7 @@ class Classification(models.Model):
 
 class New(models.Model):
     title = models.CharField(max_length=30)
+    subtitle = models.CharField(max_length=10, null=True, blank=True)
     content = models.TextField(blank=True, null=True)
     imageUrl = models.CharField(max_length=100, blank=True, null=True)
     classification = models.ForeignKey(Classification, to_field="chinese_text", on_delete=models.CASCADE)
@@ -71,9 +72,10 @@ class ProjectClassification(models.Model):
 
 class Project(models.Model):
     title = models.CharField(max_length=30)
+    subtitle = models.CharField(max_length=10, null=True, blank=True)
     content = models.TextField(blank=True, null=True)
     imageUrl = models.CharField(max_length=100, blank=True, null=True)
-    employee = models.ManyToManyField(Employee, blank=True)
+    # employee = models.ManyToManyField(Employee, blank=True)
     location = models.TextField(max_length=30, null=True)
     classification = models.ForeignKey(ProjectClassification, to_field="chinese_text", on_delete=models.CASCADE)
     startDate = models.DateField(null=True)
@@ -108,3 +110,8 @@ class CarouselImage(models.Model):
     date = models.DateField(null=True, blank=True)
     # def __str__(self):
     #     return self.image
+
+class Award(models.Model):
+    title = models.CharField(max_length=30, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)

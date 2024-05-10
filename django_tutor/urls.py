@@ -36,6 +36,7 @@ router.register(r'newimage', views.NewImageViewSet)
 router.register(r'projectimage', views.ProjectImageViewSet)
 router.register(r'carouselimage', views.CarouselImageViewSet)
 router.register(r'user', views.UserViewSet)
+router.register(r'award', views.AwardViewSet)
 
 
 

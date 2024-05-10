@@ -8,10 +8,10 @@ import json
 from urllib.parse import unquote
 # from django.contrib.auth.hashers import check_password
 
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, Award
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer, AwardSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -307,3 +307,9 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
+class AwardViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows award to be viewed or edited.
+    """
+    queryset = Award.objects.all().order_by('-date')
+    serializer_class = AwardSerializer

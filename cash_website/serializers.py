@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage, User
+from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage, User, Award
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,3 +70,9 @@ class PositionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_field = ['id']
 
+class AwardSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%Y-%m-%d")
+    
+    class Meta:
+        model = Award
+        fields = '__all__'
