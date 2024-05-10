@@ -28,6 +28,13 @@ class User(models.Model):
 
     def __str__(self):
         return self.name.name
+    
+class MemberCount(models.Model):
+    position = models.CharField(max_length=10)
+    count = models.IntegerField()
+
+    def __str__(self):
+        return self.position
 
 class Classification(models.Model):
     chinese_text = models.CharField(max_length=15, unique=True)

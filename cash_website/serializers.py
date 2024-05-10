@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage, User, Award
+from .models import New, Classification, ProjectClassification, Project, Employee, Position, NewImage, ProjectImage, CarouselImage, User, Award, MemberCount
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,4 +75,9 @@ class AwardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Award
+        fields = '__all__'
+
+class MemberCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberCount
         fields = '__all__'
