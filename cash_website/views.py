@@ -125,14 +125,14 @@ def get_project_with_images(request, project_id):
         # image_urls = [new_image.image.url for new_image in new_images]
    
     # 使用 serializers 序列化 ManyToManyField
-    employees_data = serializers.serialize('json', project_instance.employee.all())
+    # employees_data = serializers.serialize('json', project_instance.employee.all())
 
     # 返回包含New和相關NewImage的JSON響應
     return JsonResponse({
         'title': project_instance.title,
         'content': project_instance.content,
         'image_urls': image_urls,
-        'employee': employees_data,
+        # 'employee': employees_data,
         'location': project_instance.location,
         'startDate': project_instance.startDate,
         'endDate': project_instance.endDate
@@ -286,7 +286,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         else:
             category = unquote(category)
-            print(category)
+            # print(category)
             queryset = Project.objects.all().order_by('-endDate', '-id').filter(classification=category)
         
         return queryset
