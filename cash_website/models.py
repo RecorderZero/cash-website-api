@@ -118,7 +118,9 @@ class CarouselImage(models.Model):
     # def __str__(self):
     #     return self.image
 
-class Award(models.Model):
+class HistoryAward(models.Model):
     title = models.CharField(max_length=30, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
+    category = models.CharField(max_length=10, null=True, blank=True)
+    externalId = models.IntegerField(null=True, blank=True)

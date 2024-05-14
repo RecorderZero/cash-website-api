@@ -8,10 +8,10 @@ import json
 from urllib.parse import unquote
 # from django.contrib.auth.hashers import check_password
 
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, Award, MemberCount
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, HistoryAward, MemberCount
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer, AwardSerializer, MemberCountSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer, HistoryAwardSerializer, MemberCountSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -232,10 +232,11 @@ class NewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         category = self.request.query_params.get('category', None)
         if category is None:
+            # for others
             queryset = New.objects.all().order_by('-date', '-id')
 
         else:
-            category = unquote(category)
+            # for frontend
             queryset = New.objects.all().order_by('-date', '-id').filter(classification=category)
         
         return queryset
@@ -307,12 +308,12 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     # permission_classes = [permissions.IsAuthenticated]
     
-class AwardViewSet(viewsets.ModelViewSet):
+class HistoryAwardViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows award to be viewed or edited.
     """
-    queryset = Award.objects.all().order_by('-date')
-    serializer_class = AwardSerializer
+    queryset = HistoryAward.objects.all().order_by('-date')
+    serializer_class = HistoryAwardSerializer
 
 class MemberCountViewSet(viewsets.ModelViewSet):
     """
