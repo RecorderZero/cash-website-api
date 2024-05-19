@@ -8,10 +8,10 @@ import json
 from urllib.parse import unquote
 # from django.contrib.auth.hashers import check_password
 
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, HistoryAward, MemberCount
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, HistoryAward, MemberCount, ChosenAward
 from rest_framework import permissions, viewsets, status
 
-from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer, HistoryAwardSerializer, MemberCountSerializer
+from .serializers import NewSerializer, ClassificationSerializer, ProjectSerializer, ProjectClassificationSerializer, EmployeeSerializer, PositionSerializer, NewImageSerializer, ProjectImageSerializer, CarouselImageSerializer, UserSerializer, HistoryAwardSerializer, MemberCountSerializer, ChosenAwardSerializer
 # from django.shortcuts import render
 
 # Create your views here.
@@ -321,3 +321,10 @@ class MemberCountViewSet(viewsets.ModelViewSet):
     """
     queryset = MemberCount.objects.all()
     serializer_class = MemberCountSerializer
+
+class ChosenAwardViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows chosenAward to be viewed or edited.
+    """
+    queryset = ChosenAward.objects.all()
+    serializer_class = ChosenAwardSerializer

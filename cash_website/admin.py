@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, HistoryAward, MemberCount
+from .models import New, Classification, Project, ProjectClassification, Employee, Position, NewImage, ProjectImage, CarouselImage, User, HistoryAward, MemberCount, ChosenAward
 
 # Register your models here.
 admin.site.register(New)
@@ -14,3 +14,4 @@ admin.site.register(CarouselImage)
 admin.site.register(User)
 admin.site.register(HistoryAward)
 admin.site.register(MemberCount)
+admin.site.register(ChosenAward)

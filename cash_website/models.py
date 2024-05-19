@@ -117,10 +117,24 @@ class CarouselImage(models.Model):
     date = models.DateField(null=True, blank=True)
     # def __str__(self):
     #     return self.image
+    def delete(self, *args, **kwargs):
+        # 刪除檔案
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
 class HistoryAward(models.Model):
     title = models.CharField(max_length=30, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
-    category = models.CharField(max_length=10, null=True, blank=True)
-    externalId = models.IntegerField(null=True, blank=True)
+    link = models.CharField(max_length=50, null=True, blank=True)
+
+
+class ChosenAward(models.Model):
+    image = models.ImageField(upload_to='chosenAward', null=True, blank=True)
+    title = models.CharField(max_length=30, null=True, blank=True)
+    link = models.CharField(max_length=50, null=True, blank=True)
+
+    def delete(self, *args, **kwargs):
+        # 刪除檔案
+        self.image.delete()
+        super().delete(*args, **kwargs)

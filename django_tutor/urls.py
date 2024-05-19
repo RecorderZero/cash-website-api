@@ -38,6 +38,7 @@ router.register(r'carouselimage', views.CarouselImageViewSet)
 router.register(r'user', views.UserViewSet)
 router.register(r'historyaward', views.HistoryAwardViewSet)
 router.register(r'membercount', views.MemberCountViewSet)
+router.register(r'chosenaward', views.ChosenAwardViewSet)
 
 
 
