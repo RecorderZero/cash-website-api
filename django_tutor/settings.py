@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3uek=8v7li^q9_xba96a29wf^r56q8s0gn5!&kuf=ky#-0(2=5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -64,6 +64,11 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://127.0.0.1',
+    'http://localhost',
+    'http://127.0.0.1:81',
+    'http://localhost:81',
+
 ]
 
 ROOT_URLCONF = 'django_tutor.urls'
@@ -132,6 +137,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / 'static/'
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
