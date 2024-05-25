@@ -29,7 +29,8 @@ DEBUG = False
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-
+    '192.168.1.103',
+    # '1.171.49.163'
 ]
 
 CSRF_COOKIE_SECURE = True
@@ -95,9 +96,16 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3001',
     'http://127.0.0.1',
     'http://localhost',
+    'https://127.0.0.1',
+    'https://localhost',
     'http://127.0.0.1:81',
     'http://localhost:81',
-
+    'https://1.171.49.163',
+    'http://1.171.49.163',
+    'http://1.171.49.163:81',
+    'http://192.168.1.103:81',
+    'http://192.168.1.103',
+    'https://192.168.1.103',
 ]
 
 ROOT_URLCONF = 'django_tutor.urls'

@@ -27,29 +27,29 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        # 獲取用戶輸入的員工姓名
-        employee_name = request.data.get('name')
+    # def create(self, request, *args, **kwargs):
+    #     # 獲取用戶輸入的員工姓名
+    #     employee_name = request.data.get('name')
         
-        # 查找該員工是否已有帳號
-        existing_user = User.objects.filter(name=employee_name).first()
-        if existing_user:
-            # 如果已經存在，返回錯誤訊息
-            return Response({'error': '已經存在帳號'}, status=status.HTTP_400_BAD_REQUEST)
+    #     # 查找該員工是否已有帳號
+    #     existing_user = User.objects.filter(name=employee_name).first()
+    #     if existing_user:
+    #         # 如果已經存在，返回錯誤訊息
+    #         return Response({'error': '已經存在帳號'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # 查找是否存在對應的員工
-        employee = Employee.objects.filter(name=employee_name).first()
+    #     # 查找是否存在對應的員工
+    #     employee = Employee.objects.filter(name=employee_name).first()
         
-        if not employee:
-            # 如果不存在，返回錯誤訊息
-            return Response({'error': '資料尚未登錄'}, status=status.HTTP_400_BAD_REQUEST)
+    #     if not employee:
+    #         # 如果不存在，返回錯誤訊息
+    #         return Response({'error': '資料尚未登錄'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 如果存在，則創建新的用戶
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+    #     # 如果存在，則創建新的用戶
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
         
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class NewImageViewSet(viewsets.ModelViewSet):
     queryset = NewImage.objects.all()
@@ -149,7 +149,7 @@ def verify_user(request):
     if user.password != user_password:
         return JsonResponse({'error': '密碼錯誤'}, status=400)
 
-    return JsonResponse({'name': user.name.name, 'role': user.role}, status=200)
+    return JsonResponse({'name': user.name, 'role': user.role}, status=200)
 
 class ProjectImageViewSet(viewsets.ModelViewSet):
     queryset = ProjectImage.objects.all()
@@ -169,6 +169,7 @@ class CarouselImageViewSet(viewsets.ModelViewSet):
     queryset = CarouselImage.objects.all().order_by('order')
     serializer_class = CarouselImageSerializer
     parser_classes = (MultiPartParser, FormParser)
+    # permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

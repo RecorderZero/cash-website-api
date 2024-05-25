@@ -20,11 +20,12 @@ class Employee(models.Model):
         return self.name
     
 class User(models.Model):
+    name = models.CharField(max_length=20)
     account = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
     email = models.CharField(max_length=40, unique=True)
-    role = models.CharField(max_length=15, default='可讀')
-    name = models.ForeignKey(Employee, to_field='name', on_delete=models.CASCADE)
+    role = models.CharField(max_length=15, default='可讀可新增可修改可刪除')
+    # name = models.ForeignKey(Employee, to_field='name', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name.name
