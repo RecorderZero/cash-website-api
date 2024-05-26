@@ -27,18 +27,18 @@ from cash_website import views
 
 router = routers.DefaultRouter()
 router.register(r'new', views.NewViewSet, basename = 'new')
-router.register(r'classification', views.ClassificationViewSet)
-router.register(r'projectclassification', views.ProjectClassificationViewSet)
+router.register(r'classification', views.ClassificationViewSet, basename='classification')
+router.register(r'projectclassification', views.ProjectClassificationViewSet, basename='projectclassification')
 router.register(r'project', views.ProjectViewSet, basename = 'project')
-router.register(r'employee', views.EmployeeViewSet)
-router.register(r'position', views.PositionViewSet)
-router.register(r'newimage', views.NewImageViewSet)
-router.register(r'projectimage', views.ProjectImageViewSet)
-router.register(r'carouselimage', views.CarouselImageViewSet)
-router.register(r'user', views.UserViewSet)
-router.register(r'historyaward', views.HistoryAwardViewSet)
-router.register(r'membercount', views.MemberCountViewSet)
-router.register(r'chosenaward', views.ChosenAwardViewSet)
+router.register(r'employee', views.EmployeeViewSet, basename='employee')
+router.register(r'position', views.PositionViewSet, basename='position')
+router.register(r'newimage', views.NewImageViewSet, basename='newimage')
+router.register(r'projectimage', views.ProjectImageViewSet, basename='projectimage')
+router.register(r'carouselimage', views.CarouselImageViewSet, basename='carouselimage')
+router.register(r'user', views.UserViewSet, basename='user')
+router.register(r'historyaward', views.HistoryAwardViewSet, basename='historyaward')
+router.register(r'membercount', views.MemberCountViewSet, basename='membercount')
+router.register(r'chosenaward', views.ChosenAwardViewSet, basename='chosenaward')
 
 
 
@@ -49,7 +49,7 @@ urlpatterns = [
     # path('', include('cash_website.urls')),
     path('verify/', views.verify_user),
     path('get_new_with_images/<int:new_id>/', views.get_new_with_images),
-    path('get_valid_carousel/', views.get_valid_carousel),
+    # path('get_valid_carousel/', views.get_valid_carousel),
     path('get_project_with_images/<int:project_id>/', views.get_project_with_images),
     path('get_new_images_detail/<int:new_id>/', views.get_new_images_detail),
     path('get_project_images_detail/<int:project_id>/', views.get_project_images_detail),

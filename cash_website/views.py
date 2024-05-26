@@ -17,8 +17,6 @@ from .serializers import NewSerializer, ClassificationSerializer, ProjectSeriali
 # Create your views here.
 # 權限尚須調整 post,patch等需要權限
 
-TRANSLATE_ADDR = 'http://127.0.0.1:8000'
-
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows user to be viewed or edited.
@@ -77,7 +75,7 @@ def get_project_images_detail(request, project_id):
     
     # 遍历每个图像对象，修改其中的 URL 字段
     for image_data in serialized_data:
-        image_data['image'] = TRANSLATE_ADDR + image_data['image']
+        image_data['image'] = request.build_absolute_uri(image_data['image'])
 
     # 返回序列化后的数据给前端
     return JsonResponse(serialized_data, safe=False) 
@@ -92,7 +90,7 @@ def get_new_images_detail(request, new_id):
     
     # 遍历每个图像对象，修改其中的 URL 字段
     for image_data in serialized_data:
-        image_data['image'] = TRANSLATE_ADDR + image_data['image']
+        image_data['image'] = request.build_absolute_uri(image_data['image'])
 
     # 返回序列化后的数据给前端
     return JsonResponse(serialized_data, safe=False)    
@@ -103,14 +101,14 @@ def get_new_with_images(request, new_id):
     image_urls = []
     # 將相關的NewImage數據轉換為JSON格式
     for new_image in new_images:
-        image_url = TRANSLATE_ADDR + new_image.image.url
+        image_url = request.build_absolute_uri(new_image.image.url)
         image_urls.append(image_url)
         # image_urls = [new_image.image.url for new_image in new_images]
 
     # 返回包含New和相關NewImage的JSON響應
     return JsonResponse({
-        'title': new_instance.title,
-        'content': new_instance.content,
+        # 'title': new_instance.title,
+        # 'content': new_instance.content,
         'image_urls': image_urls
     })
 
@@ -120,7 +118,7 @@ def get_project_with_images(request, project_id):
     image_urls = []
     # 將相關的projectImage數據轉換為JSON格式
     for project_image in project_images:
-        image_url = TRANSLATE_ADDR + project_image.image.url
+        image_url = request.build_absolute_uri(project_image.image.url)
         image_urls.append(image_url)
         # image_urls = [new_image.image.url for new_image in new_images]
    
@@ -166,10 +164,18 @@ class ProjectImageViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class CarouselImageViewSet(viewsets.ModelViewSet):
-    queryset = CarouselImage.objects.all().order_by('order')
+    # queryset = CarouselImage.objects.filter(displayornot=True).order_by('order')
     serializer_class = CarouselImageSerializer
     parser_classes = (MultiPartParser, FormParser)
     # permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        condition = self.request.query_params.get('displayornot')
+        if condition:
+            return CarouselImage.objects.filter(displayornot=True).order_by('order')
+            
+        else:
+            return CarouselImage.objects.all().order_by('order')
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -186,31 +192,31 @@ class CarouselImageViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def get_valid_carousel(request):
-    # 獲取有效的carousel數據，按照order由小到大排序
-    valid_carousel = CarouselImage.objects.filter(displayornot=True).order_by('order')
+# def get_valid_carousel(request):
+#     # 獲取有效的carousel數據，按照order由小到大排序
+#     valid_carousel = CarouselImage.objects.filter(displayornot=True).order_by('order')
 
-    # 根據?source參數返回不同的結果
-    source = request.GET.get('source')
+#     # 根據?source參數返回不同的結果
+#     source = request.GET.get('source')
 
-    if source == 'back':
-        # 如果'?source=back'，回傳{'id': id, 'order': order}的物件陣列
-        carousel_data = [{'id': carousel.id, 'order': carousel.order} for carousel in valid_carousel]
-        return JsonResponse(carousel_data, safe=False)
-    elif source == 'front':
-        # 如果'?source=front'，回傳{'image_urls': image_urls}陣列
-        carousel = [{'imageUrl': TRANSLATE_ADDR + carousel.image.url, 'location': carousel.location, 'date': carousel.date} for carousel in valid_carousel]
-        return JsonResponse(carousel, safe=False)
-    else:
-        # 如果source參數不是'back'或'front'，返回錯誤響應
-        return JsonResponse({'error': 'Invalid source parameter'})
+#     if source == 'back':
+#         # 如果'?source=back'，回傳{'id': id, 'order': order}的物件陣列
+#         carousel_data = [{'id': carousel.id, 'order': carousel.order} for carousel in valid_carousel]
+#         return JsonResponse(carousel_data, safe=False)
+#     elif source == 'front':
+#         # 如果'?source=front'，回傳{'image_urls': image_urls}陣列
+#         carousel = [{'imageUrl': request.build_absolute_uri(carousel.image.url), 'location': carousel.location, 'date': carousel.date} for carousel in valid_carousel]
+#         return JsonResponse(carousel, safe=False)
+#     else:
+#         # 如果source參數不是'back'或'front'，返回錯誤響應
+#         return JsonResponse({'error': 'Invalid source parameter'})
 
 # def get_valid_carousel(request):
 #     valid_carousel = get_list_or_404(CarouselImage, displayornot=True)
 #     image_urls = []
 #     # 將有效的carousel數據轉換為JSON格式
 #     for carousel in valid_carousel:
-#         image_url = TRANSLATE_ADDR + carousel.image.url
+#         image_url = request.build_absolute_uri(carousel.image.url)
 #         image_urls.append(image_url)
 #         # image_urls = [new_image.image.url for new_image in new_images]
 

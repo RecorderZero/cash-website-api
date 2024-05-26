@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '&]it|DQvD)iIKZ9TzbI3cqh0$z#-1a8|DBtD^p$+Y7@X{=(FPh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -37,7 +37,9 @@ CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PEOTO', 'https')
 
 # LOGGING = {
 #     "version": 1,
@@ -100,9 +102,9 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost',
     'http://127.0.0.1:81',
     'http://localhost:81',
-    'https://1.171.49.163',
-    'http://1.171.49.163',
-    'http://1.171.49.163:81',
+    # 'https://1.171.5.146',
+    # 'http://1.171.5.146',
+    # 'http://1.171.5.146:81',
     'http://192.168.1.103:81',
     'http://192.168.1.103',
     'https://192.168.1.103',
